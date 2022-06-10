@@ -6,6 +6,7 @@ on:
       - 'main'
     paths:
       - 'contracts/**'
+      - 'test/**'
   workflow_dispatch:
 
 jobs:
