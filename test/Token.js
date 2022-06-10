@@ -1,14 +1,12 @@
 const { expect } = require("chai");
 
-describe("Token contract", function () {
-  it("Deployment should assign the total supply of tokens to the owner", async function () {
-    const [owner] = await ethers.getSigners();
+describe("BikeToken contract", function () {
+  it("Deployment should set initial supply as constructor parameter", async function () {
+    const BikeToken = await ethers.getContractFactory("BikeToken");
 
-    const Token = await ethers.getContractFactory("Token");
+    const initialSupply = 1000000;
+    const token = await BikeToken.deploy(initialSupply);
 
-    const hardhatToken = await Token.deploy();
-
-    const ownerBalance = await hardhatToken.balanceOf(owner.address);
-    expect(await hardhatToken.totalSupply()).to.equal(ownerBalance);
+    expect(await token.totalSupply()).to.equal(initialSupply);
   });
 });
