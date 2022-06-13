@@ -13,8 +13,8 @@ beforeEach(async () => {
   deployedToken = await BikeToken.deploy(initialSupply);
 });
 
-describe("BikeToken contract initialization", () => {
-  it("Deployment should set initial supply as constructor parameter", async () => {
+describe("Deployment", () => {
+  it("Should set correct supply", async () => {
     expect(await deployedToken.totalSupply()).to.equal(initialSupply);
   });
 
@@ -29,10 +29,29 @@ describe("BikeToken contract initialization", () => {
   it("Should have 18 decimals", async () => {
     expect(await deployedToken.decimals()).to.equal(18);
   });
+
+  it('Should assign the total supply of tokens to the owner', async () => {
+    expect(await deployedToken.balanceOf(owner.address)).to.equal(1000000);
+  });
 });
 
-describe('BikingBros accounts', () => {
-  it('Owner balance should be 1000000', async () => {
+describe('Transactions', () => {
+  it('Should transfer tokens between accounts', async () => {
     expect(await deployedToken.balanceOf(owner.address)).to.equal(1000000);
+    await deployedToken.transfer(addr1.address, 50);
+    const addr1Balance = await deployedToken.balanceOf(addr1.address);
+    expect(addr1Balance).to.equal(50);
+    expect(await deployedToken.balanceOf(owner.address)).to.equal(1000000 - 50);
+  });
+
+  it("Should fail if sender doesn’t have enough tokens", async function () {
+    const initialOwnerBalance = await deployedToken.balanceOf(owner.address);
+    await expect(
+      deployedToken.connect(addr1).transfer(owner.address, 1)
+    ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
+
+    expect(await deployedToken.balanceOf(owner.address)).to.equal(
+      initialOwnerBalance
+    );
   });
 });
