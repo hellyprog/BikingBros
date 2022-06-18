@@ -9,6 +9,7 @@ async function main() {
     const token = await BikeToken.deploy(1000000);
 
     console.log("BikeToken address:", token.address);
+    console.log("BikeToken supply:", await token.totalSupply());
 }
 
 main()
