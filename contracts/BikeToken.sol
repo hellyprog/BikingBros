@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Wrapper.sol";
 
 contract BikeToken is ERC20, ERC20Permit, ERC20Votes {
     constructor(uint256 initialSupply) ERC20("BikingBros", "BIKE") ERC20Permit("BikingBros") {
-        _mint(msg.sender, initialSupply * 10**18);
+        _mint(msg.sender, initialSupply);
     }
 
     function _afterTokenTransfer(address from, address to, uint256 amount)

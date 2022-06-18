@@ -6,7 +6,8 @@ async function main() {
     console.log("Account balance:", (await deployer.getBalance()).toString());
 
     const BikeToken = await ethers.getContractFactory("BikeToken");
-    const token = await BikeToken.deploy(1000000);
+    let initialSupply = '1000000';
+    const token = await BikeToken.deploy(initialSupply.padEnd(initialSupply.length + 18, '0'));
 
     console.log("BikeToken address:", token.address);
     console.log("BikeToken supply:", await token.totalSupply());
