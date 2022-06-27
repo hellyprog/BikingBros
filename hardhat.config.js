@@ -8,7 +8,7 @@ module.exports = {
   settings: {
     optimizer: {
       enabled: true,
-      runs: 200
+      runs: 1
     }
   },
   networks: {
@@ -19,9 +19,7 @@ module.exports = {
     },
     mumbai: {
       url: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
-      accounts: [`${MUMBAI_PRIVATE_KEY}`],
-      gasPrice: 20000000000,
-      gas: 6000000
+      accounts: [`${MUMBAI_PRIVATE_KEY}`]
     }
   }
 };
