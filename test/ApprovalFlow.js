@@ -10,7 +10,7 @@ const { MIN_DELAY, QUORUM_PERCENTAGE, VOTING_PERIOD, VOTING_DELAY, ADDRESS_ZERO 
 }
 
 describe('Test governance contracts, proposals, voting and execution', function () {
-    it('Testing proposal creation, voting, execution by single user', async () => {
+    it('Addr1 balance should be 490 after proposal execution', async () => {
         [owner, addr1, addr2] = await ethers.getSigners();
       
         const governanceToken = await ethers.getContractFactory('BikeToken')
@@ -36,6 +36,8 @@ describe('Test governance contracts, proposals, voting and execution', function 
         const transferTx = await deployedTreasury.transferOwnership(deployedTimeLock.address);
         await transferTx.wait(1);
 
+        const setTreasuryAddressTx = await deployedToken.setTreasuryAddress(deployedTreasury.address);
+        await setTreasuryAddressTx.wait(1);
         const transferTokenTx = await deployedToken.transfer(deployedTreasury.address, 10000);
         await transferTokenTx.wait(1);
         /**
@@ -113,7 +115,9 @@ describe('Test governance contracts, proposals, voting and execution', function 
     
         const executeTx = await deployedGovernor.execute([deployedTreasury.address], [0], [encodedFunctionCall], descriptionHash);
         await executeTx.wait(1);
-        const value = await deployedToken.balanceOf(deployedTreasury.address);
+        const value = await deployedToken.balanceOf(addr1.address);
+        const feePercentage = await deployedToken.transactionFeePercentage();
         console.log(value);
+        expect(value).to.be.equal(500 - 500 * feePercentage / 100);
     });
 });

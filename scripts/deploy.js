@@ -15,6 +15,8 @@ async function main() {
     await treasury.deployed();
     console.log('BikeTreasury address:', treasury.address);
 
+    await token.setTreasuryAddress(treasury.address);
+
     const BikeTimeLock = await ethers.getContractFactory('BikeTimeLock');
     const timeLock = await BikeTimeLock.deploy(3600, [], []);
     await timeLock.deployed();

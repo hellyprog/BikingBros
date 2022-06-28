@@ -11,6 +11,7 @@ beforeEach(async () => {
   [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
   deployedToken = await BikeToken.deploy(initialSupply);
+  await deployedToken.setTreasuryAddress(addr2.address);
 });
 
 describe("Deployment", () => {
@@ -37,18 +38,23 @@ describe("Deployment", () => {
 
 describe('Transactions', () => {
   it('Should transfer tokens between accounts', async () => {
+    const transferAmount = 50;
+    const feePercentage = 2;
+
     expect(await deployedToken.balanceOf(owner.address)).to.equal(1000000);
-    await deployedToken.transfer(addr1.address, 50);
+    await deployedToken.transfer(addr1.address, transferAmount);
     const addr1Balance = await deployedToken.balanceOf(addr1.address);
-    expect(addr1Balance).to.equal(50);
-    expect(await deployedToken.balanceOf(owner.address)).to.equal(1000000 - 50);
+    const addr2Balance = await deployedToken.balanceOf(addr2.address);
+    expect(addr1Balance).to.equal(transferAmount - (transferAmount * feePercentage / 100));
+    expect(addr2Balance).to.equal(transferAmount * feePercentage / 100);
+    expect(await deployedToken.balanceOf(owner.address)).to.equal(1000000 - transferAmount);
   });
 
   it("Should fail if sender doesn’t have enough tokens", async function () {
     const initialOwnerBalance = await deployedToken.balanceOf(owner.address);
     await expect(
       deployedToken.connect(addr1).transfer(owner.address, 1)
-    ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
+    ).to.be.reverted;
 
     expect(await deployedToken.balanceOf(owner.address)).to.equal(
       initialOwnerBalance
